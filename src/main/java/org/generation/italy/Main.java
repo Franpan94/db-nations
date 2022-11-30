@@ -6,14 +6,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class Main {
-	private static final String URL = "jdbc:mysql://localhost:3306/db-aereoporto";
+	private static final String URL = "jdbc:mysql://localhost:3306/nations";
 	private static final String USER = "root";
 	private static final String PSW = "root";
 	
 	public static void main(String[] args) {
 		
 		query1();
-		query2();
+		
 		query1();
 		query1();
 	}
@@ -23,7 +23,7 @@ public class Main {
 			
 			
 			
-			final String sql = "SELECT * FROM roles";
+			final String sql = "SELECT * FROM continents";
 			
 			try(PreparedStatement ps = con.prepareStatement(sql)){
 				try(ResultSet rs = ps.executeQuery()){
