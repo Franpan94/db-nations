@@ -13,6 +13,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		nations();
+		languages();
 	}
 	
 	private static void nations() {
@@ -23,8 +24,8 @@ public class Main {
 					         + " JOIN regions "
 					         + "  ON countries.region_id = regions.region_id "
 					         + " JOIN continents "
-					         + "  ON regions.region_id = continents.continent_id "
-					         + " WHERE countries.name LIKE ?"
+					         + "  ON regions.continent_id = continents.continent_id "
+					         + " WHERE countries.name LIKE ? "
 					         + " ORDER BY countries.name ";
 			
 			try(PreparedStatement ps = con.prepareStatement(sql)){
@@ -32,9 +33,9 @@ public class Main {
 				System.out.print("Inserisci nazione: ");
 				Scanner sc = new Scanner(System.in);
 				String nts = sc.nextLine();
-				sc.close();
 				
-				ps.setString(1, nts);
+				ps.setString(1, '%' + nts + '%');
+				
 				
 				try(ResultSet rs = ps.executeQuery()){
 					
@@ -57,5 +58,43 @@ public class Main {
 			System.err.println(e.getMessage());
 		}
 	}
-}
 
+
+private static void languages() {
+    try(Connection con = DriverManager.getConnection(URL, USER, PSW)) {
+			
+			final String sql = " SELECT languages.language AS languageName "
+					         + " FROM countries "
+					         + " JOIN country_languages "
+					         + "  ON countries.country_id = country_languages.country_id "
+					         + " JOIN languages "
+					         + "  ON country_languages.language_id = languages.language_id "
+					         + " WHERE countries.country_id = ? ";
+			
+			try(PreparedStatement ps = con.prepareStatement(sql)){
+				
+				
+				Scanner sc = new Scanner(System.in);
+				
+				System.out.print("Scegli id: ");
+				int ntsId = sc.nextInt();
+				
+				ps.setInt(1, ntsId);
+				
+				try(ResultSet rs = ps.executeQuery()){
+					
+					while(rs.next()) {
+						
+						final String languages = rs.getString(1);
+						
+						System.out.println("Lingue: " +  languages);
+					}
+				}
+			}
+			
+		
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+}
