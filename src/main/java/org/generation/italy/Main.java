@@ -13,12 +13,10 @@ public class Main {
 	
 	public static void main(String[] args) {
 		nations();
-		languages();
-		stats();
 	}
 	
 	private static void nations() {
-      try(Connection con = DriverManager.getConnection(URL, USER, PSW)) {
+      try(Connection con = DriverManager.getConnection(URL, USER, PSW); Scanner sc = new Scanner(System.in)) {
 			
 			final String sql = " SELECT countries.country_id AS id, countries.name AS nations, regions.name AS regions, continents.name AS continents "
 					         + " FROM countries "
@@ -32,7 +30,6 @@ public class Main {
 			try(PreparedStatement ps = con.prepareStatement(sql)){
 				
 				System.out.print("Inserisci nazione: ");
-				Scanner sc = new Scanner(System.in);
 				String nts = sc.nextLine();
 				
 				ps.setString(1, '%' + nts + '%');
@@ -54,31 +51,19 @@ public class Main {
 				}
 			}
 			
-		
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
-
-
-private static void languages() {
-    try(Connection con = DriverManager.getConnection(URL, USER, PSW)) {
+			System.out.println("");
+			System.out.print("Scegli id: ");
+			int ntsId = sc.nextInt();
 			
-			final String sql = " SELECT languages.language AS languageName "
-					         + " FROM countries "
-					         + " JOIN country_languages "
-					         + "  ON countries.country_id = country_languages.country_id "
-					         + " JOIN languages "
-					         + "  ON country_languages.language_id = languages.language_id "
-					         + " WHERE countries.country_id = ? ";
+			final String sql1 = " SELECT languages.language AS languageName "
+			         + " FROM countries "
+			         + " JOIN country_languages "
+			         + "  ON countries.country_id = country_languages.country_id "
+			         + " JOIN languages "
+			         + "  ON country_languages.language_id = languages.language_id "
+			         + " WHERE countries.country_id = ? ";
 			
-			try(PreparedStatement ps = con.prepareStatement(sql)){
-				
-				
-				Scanner sc = new Scanner(System.in);
-				
-				System.out.print("Scegli id: ");
-				int ntsId = sc.nextInt();
+            try(PreparedStatement ps = con.prepareStatement(sql1)){
 				
 				ps.setInt(1, ntsId);
 				
@@ -88,48 +73,39 @@ private static void languages() {
 						
 						final String languages = rs.getString(1);
 						
-						System.out.println("Lingue: " +  languages);
+						System.out.print(languages + (!rs.isLast() ? ", " : ""));
 					}
 				}
 			}
 			
-		
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
-
-private static void stats() {
-    try(Connection con = DriverManager.getConnection(URL, USER, PSW)) {
 			
-			final String sql = " SELECT languages.language AS languageName "
-					         + " FROM countries "
-					         + " JOIN country_languages "
-					         + "  ON countries.country_id = country_languages.country_id "
-					         + " JOIN languages "
-					         + "  ON country_languages.language_id = languages.language_id "
-					         + " WHERE countries.country_id = ? ";
+            System.out.println("");
 			
-			try(PreparedStatement ps = con.prepareStatement(sql)){
+			final String sql2 = " SELECT country_stats.year AS year, country_stats.population AS population, country_stats.gdp AS gdp "
+			         + " FROM countries "
+			         + " JOIN country_stats "
+			         + "  ON countries.country_id = country_stats.country_id "
+			         + " WHERE countries.country_id = ? ";
+			
+            try(PreparedStatement ps = con.prepareStatement(sql2)){
 				
-				
-				Scanner sc = new Scanner(System.in);
-				
-				System.out.print("Scegli id: ");
-				int ntsId = sc.nextInt();
-				
-				ps.setInt(1, ntsId);
+                ps.setInt(1, ntsId);
 				
 				try(ResultSet rs = ps.executeQuery()){
 					
-					while(rs.next()) {
+					if(rs.next()) {
 						
-						final String languages = rs.getString(1);
+						final String year = rs.getString(1);
+						final String population = rs.getString(2);
+						final String gdp = rs.getString(3);
 						
-						System.out.println("Lingue: " +  languages);
+						System.out.println("Statistiche recenti: " + "\nAnno: " + year + ", "  
+						                   + "popolazione: " + population + ", " + "Gdp: "+ gdp + ", "
+						                  );
 					}
 				}
 			}
+		
 			
 		
 		} catch (Exception e) {
