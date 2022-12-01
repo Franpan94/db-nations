@@ -69,6 +69,8 @@ public class Main {
 				
 				try(ResultSet rs = ps.executeQuery()){
 					
+					System.out.println("Lingue parlate: ");
+					
 					while(rs.next()) {
 						
 						final String languages = rs.getString(1);
