@@ -14,6 +14,7 @@ public class Main {
 	public static void main(String[] args) {
 		nations();
 		languages();
+		stats();
 	}
 	
 	private static void nations() {
@@ -61,6 +62,44 @@ public class Main {
 
 
 private static void languages() {
+    try(Connection con = DriverManager.getConnection(URL, USER, PSW)) {
+			
+			final String sql = " SELECT languages.language AS languageName "
+					         + " FROM countries "
+					         + " JOIN country_languages "
+					         + "  ON countries.country_id = country_languages.country_id "
+					         + " JOIN languages "
+					         + "  ON country_languages.language_id = languages.language_id "
+					         + " WHERE countries.country_id = ? ";
+			
+			try(PreparedStatement ps = con.prepareStatement(sql)){
+				
+				
+				Scanner sc = new Scanner(System.in);
+				
+				System.out.print("Scegli id: ");
+				int ntsId = sc.nextInt();
+				
+				ps.setInt(1, ntsId);
+				
+				try(ResultSet rs = ps.executeQuery()){
+					
+					while(rs.next()) {
+						
+						final String languages = rs.getString(1);
+						
+						System.out.println("Lingue: " +  languages);
+					}
+				}
+			}
+			
+		
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+
+private static void stats() {
     try(Connection con = DriverManager.getConnection(URL, USER, PSW)) {
 			
 			final String sql = " SELECT languages.language AS languageName "
